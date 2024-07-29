@@ -23,7 +23,18 @@ if platform.system().lower() == 'darwin':
 def run_ffmpeg(args: List[str]) -> bool:
     commands = ['ffmpeg', '-hide_banner', '-loglevel', roop.globals.log_level]
     commands.extend(args)
-    print(" ".join(commands))
+    # print(" ".join(commands))
+    try:
+        subprocess.check_output(commands, stderr=subprocess.STDOUT)
+        return True
+    except Exception:
+        pass
+    return False
+
+def run_imagemagick(args: List[str]) -> bool:
+    commands = ['convert']
+    commands.extend(args)
+    # print(" ".join(commands))
     try:
         subprocess.check_output(commands, stderr=subprocess.STDOUT)
         return True
@@ -59,7 +70,17 @@ def create_video(target_path: str, fps: float = 30) -> bool:
     if roop.globals.output_video_encoder in ['h264_nvenc', 'hevc_nvenc']:
         commands.extend(['-cq', str(output_video_quality)])
     commands.extend(['-pix_fmt', 'yuv420p', '-vf', 'colorspace=bt709:iall=bt601-6-625:fast=1', '-y', temp_output_path])
+    
     return run_ffmpeg(commands)
+
+
+def create_gif(target_path: str, fps: float = 30) -> bool:
+    delay = (1.0 / fps) * 100
+    temp_output_path = get_temp_output_path(target_path)
+    temp_directory_path = get_temp_directory_path(target_path)
+    commands = ['-delay', str(delay), '-loop', '0', os.path.join(temp_directory_path, '*.' + roop.globals.temp_frame_format), roop.globals.output_path]
+
+    return run_imagemagick(commands)
 
 
 def restore_audio(target_path: str, output_path: str) -> None:

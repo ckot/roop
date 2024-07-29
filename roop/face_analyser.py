@@ -51,4 +51,6 @@ def find_similar_face(frame: Frame, reference_face: Face) -> Optional[Face]:
                 distance = numpy.sum(numpy.square(face.normed_embedding - reference_face.normed_embedding))
                 if distance < roop.globals.similar_face_distance:
                     return face
+                else:
+                  print(f"find_similar_face() distance: {distance} > {roop.globals.similar_face_distance} - NO SIMILAR FACE FOUND")
     return None

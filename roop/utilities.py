@@ -51,7 +51,7 @@ def detect_fps(target_path: str) -> float:
         return numerator / denominator
     except Exception:
         pass
-    return 30
+    return float(30)
 
 
 def extract_frames(target_path: str, fps: float = 30) -> bool:
@@ -70,7 +70,7 @@ def create_video(target_path: str, fps: float = 30) -> bool:
     if roop.globals.output_video_encoder in ['h264_nvenc', 'hevc_nvenc']:
         commands.extend(['-cq', str(output_video_quality)])
     commands.extend(['-pix_fmt', 'yuv420p', '-vf', 'colorspace=bt709:iall=bt601-6-625:fast=1', '-y', temp_output_path])
-    
+
     return run_ffmpeg(commands)
 
 
@@ -139,6 +139,13 @@ def clean_temp(target_path: str) -> None:
 
 def has_image_extension(image_path: str) -> bool:
     return image_path.lower().endswith(('png', 'jpg', 'jpeg', 'webp'))
+
+
+def is_animation(image_path: str) -> bool:
+    if image_path and os.path.isfile(image_path):
+        mimetype, _ = mimetypes.guess_type(image_path)
+        return bool(mimetype and mimetype == 'image/gif')
+    return False
 
 
 def is_image(image_path: str) -> bool:

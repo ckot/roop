@@ -18,7 +18,7 @@ import onnxruntime
 import tensorflow
 import roop.globals
 import roop.metadata
-import roop.ui as ui
+# import roop.ui as ui
 from roop.predictor import predict_image, predict_video
 from roop.processors.frame.core import get_frame_processors_modules
 from roop.utilities import has_image_extension, is_image, is_video, detect_fps, create_video, create_gif, extract_frames, get_temp_frame_paths, restore_audio, create_temp, move_temp, clean_temp, normalize_output_path
@@ -78,7 +78,6 @@ def parse_args2() -> None:
     roop.globals.execution_providers = decode_execution_providers(args.execution_provider)
     roop.globals.execution_threads = args.execution_threads
     return args
-
 
 
 def parse_args() -> None:
@@ -186,14 +185,17 @@ def pre_check() -> bool:
 
 def update_status(message: str, scope: str = 'ROOP.CORE') -> None:
     print(f'[{scope}] {message}')
-    if not roop.globals.headless:
-        ui.update_status(message)
+    # if not roop.globals.headless:
+    #     ui.update_status(message)
 
 
 def swap_image_to_image():
     # sinces it's a single frame cp target to output and then we'll
     # just swap src on top of it
-    shutil.copy2(roop.globals.target_path, roop.globals.output_path)
+    # not sure if it was meta-data, symlink, or google-drive, but copy2() doens't
+    # work yet copy() does
+    # shutil.copy2(roop.globals.target_path, roop.globals.output_path)
+    shutil.copy(roop.globals.target_path, roop.globals.output_path)
     # process frame
     for frame_processor in get_frame_processors_modules(roop.globals.frame_processors):
         # update_status('Progressing...', frame_processor.NAME)
@@ -269,23 +271,6 @@ def start() -> None:
     # process image to image (non-animated)
     if has_image_extension(roop.globals.target_path):
         swap_image_to_image()
-        # update_status("target is a static image")
-        # # check image for nsf2 content
-        # if predict_image(roop.globals.target_path):
-        #   destroy()
-        # shutil.copy2(roop.globals.target_path, roop.globals.output_path)
-        # # process frame
-        # for frame_processor in get_frame_processors_modules(roop.globals.frame_processors):
-        #     # update_status('Progressing...', frame_processor.NAME)
-
-        #     frame_processor.process_image(roop.globals.source_path, roop.globals.output_path, roop.globals.output_path)
-        #     frame_processor.post_process()
-        # # validate image
-        # # update_status("validating output")
-        # if is_image(roop.globals.target_path):
-        #     update_status('Processing to image succeed!')
-        # else:
-        #     update_status('Processing to image failed!')
         return
 
     # process image to videos (or gifs???)
@@ -375,20 +360,7 @@ def run() -> None:
     limit_resources()
     if roop.globals.headless:
         start()
-    else:
-        window = ui.init(start, destroy)
-        window.mainloop()
-
-def run_it() -> None:
-    args = parse_args2()
-    sources = args.source_path
-    targets = args.target_path
-    output_path = args.target_path
-
-    if not pre_check():
-        return
-    for frame_processor in get_frame_processors_modules(roop.globals.frame_processors):
-        if not frame_processor.pre_check():
-            return
-    limit_resources()
+    # else:
+    #     window = ui.init(start, destroy)
+    #     window.mainloop()
 

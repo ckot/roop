@@ -26,7 +26,7 @@ def clear_face_analyser() -> Any:
     FACE_ANALYSER = None
 
 
-def get_one_face(frame: Frame, position: int = 0) -> Optional[Face]:
+def get_one_face(frame: Frame, position: int = 0) -> Optional[Face]: # type: ignore
     many_faces = get_many_faces(frame)
     if many_faces:
         try:
@@ -36,14 +36,14 @@ def get_one_face(frame: Frame, position: int = 0) -> Optional[Face]:
     return None
 
 
-def get_many_faces(frame: Frame) -> Optional[List[Face]]:
+def get_many_faces(frame: Frame) -> Optional[List[Face]]: # type: ignore
     try:
         return get_face_analyser().get(frame)
     except ValueError:
         return None
 
 
-def find_similar_face(frame: Frame, reference_face: Face) -> Optional[Face]:
+def find_similar_face(frame: Frame, reference_face: Face) -> Optional[Face]: # type: ignore
     many_faces = get_many_faces(frame)
     if many_faces:
         for face in many_faces:
@@ -53,4 +53,6 @@ def find_similar_face(frame: Frame, reference_face: Face) -> Optional[Face]:
                     return face
                 else:
                   print(f"find_similar_face() distance: {distance} > {roop.globals.similar_face_distance} - NO SIMILAR FACE FOUND")
+    else:
+        print("NO FACE FOUND. so unable to determine similarity distance")
     return None

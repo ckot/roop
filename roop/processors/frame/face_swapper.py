@@ -56,11 +56,11 @@ def post_process() -> None:
     clear_face_reference()
 
 
-def swap_face(source_face: Face, target_face: Face, temp_frame: Frame) -> Frame:
+def swap_face(source_face: Face, target_face: Face, temp_frame: Frame) -> Frame: # type: ignore
     return get_face_swapper().get(temp_frame, target_face, source_face, paste_back=True)
 
 
-def process_frame(source_face: Face, reference_face: Face, temp_frame: Frame) -> Frame:
+def process_frame(source_face: Face, reference_face: Face, temp_frame: Frame) -> Frame: # type: ignore
     if roop.globals.many_faces:
         many_faces = get_many_faces(temp_frame)
         if many_faces:

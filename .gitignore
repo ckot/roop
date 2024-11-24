@@ -2,5 +2,11 @@
 models
 temp
 __pycache__
+**/*.pyc
 venv
 *.code-workspace
+.Ds_Store
+assets
+images
+output
+gfpgan
